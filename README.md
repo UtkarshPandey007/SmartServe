@@ -2,9 +2,12 @@
 
 > Data-driven volunteer coordination for social impact. Built for **GDG Solution Challenge 2026**.
 
+🌐 **Live Demo:** [smart-serve-nine.vercel.app](https://smart-serve-nine.vercel.app)
+
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-Auth%20%2B%20Firestore-FFCA28?logo=firebase&logoColor=black)
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![Vercel](https://img.shields.io/badge/Deployed-Vercel-black?logo=vercel)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
