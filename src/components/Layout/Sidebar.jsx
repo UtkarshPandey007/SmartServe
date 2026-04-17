@@ -35,7 +35,7 @@ export default function Sidebar() {
             <Zap size={22} />
           </div>
           <div className="logo-text">
-            <h1>VolunteerIQ</h1>
+            <h1>SmartServe</h1>
             <span className="logo-tagline">
               {isVolunteer ? 'Volunteer Portal' : 'Smart Coordination'}
             </span>

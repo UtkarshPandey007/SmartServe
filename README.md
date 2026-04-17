@@ -1,4 +1,4 @@
-# ⚡ VolunteerIQ — Smart Volunteer Coordination Platform
+# ⚡ SmartServe — Smart Volunteer Coordination Platform
 
 > Data-driven volunteer coordination for social impact. Built for **GDG Solution Challenge 2026**.
 
@@ -15,7 +15,7 @@ Disaster response and community welfare programs face a critical coordination ch
 
 ## 💡 Solution
 
-**VolunteerIQ** is a real-time, intelligent volunteer coordination platform that:
+**SmartServe** is a real-time, intelligent volunteer coordination platform that:
 - Uses an **urgency scoring algorithm** to prioritize community needs
 - Provides a **smart matching engine** that pairs volunteers with needs based on skills, location, and availability
 - Offers **role-based dashboards** for coordinators and volunteers

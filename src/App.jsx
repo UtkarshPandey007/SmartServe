@@ -23,7 +23,7 @@ function ProtectedRoute({ children }) {
     return (
       <div className="app-loading">
         <div className="loading-spinner" />
-        <p>Loading VolunteerIQ...</p>
+        <p>Loading SmartServe...</p>
       </div>
     );
   }
@@ -68,7 +68,7 @@ function AppRoutes() {
     return (
       <div className="app-loading">
         <div className="loading-spinner" />
-        <p>Loading VolunteerIQ...</p>
+        <p>Loading SmartServe...</p>
       </div>
     );
   }

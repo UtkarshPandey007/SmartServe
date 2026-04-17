@@ -25,7 +25,7 @@ export default function Header() {
   const [seeding, setSeeding] = useState(false);
   const [seedDone, setSeedDone] = useState(false);
   const pageInfo = pageTitles[location.pathname] || {
-    title: userProfile?.role === 'volunteer' ? 'My Dashboard' : 'VolunteerIQ',
+    title: userProfile?.role === 'volunteer' ? 'My Dashboard' : 'SmartServe',
     sub: userProfile?.role === 'volunteer' ? 'Your personal volunteering overview' : '',
   };
 

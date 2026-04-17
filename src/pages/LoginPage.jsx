@@ -107,7 +107,7 @@ export default function LoginPage() {
           <div className="brand-icon">
             <Zap size={28} />
           </div>
-          <h1>VolunteerIQ</h1>
+          <h1>SmartServe</h1>
           <p>Data-Driven Volunteer Coordination</p>
         </div>
 
