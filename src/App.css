@@ -112,6 +112,75 @@
   100% { transform: translateX(300%); width: 40%; }
 }
 
+/* Email Verification Banner */
+.verify-banner {
+  position: fixed;
+  top: var(--header-height);
+  left: var(--sidebar-width);
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 32px;
+  background: rgba(245, 158, 11, 0.12);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.25);
+  z-index: 85;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.verify-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fbbf24;
+  font-size: 0.8rem;
+}
+
+.verify-banner-content strong {
+  color: #fde68a;
+}
+
+.verify-banner-resend {
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.verify-banner-resend:hover {
+  background: rgba(245, 158, 11, 0.3);
+}
+.verify-banner-resend:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.verify-banner-close {
+  background: none;
+  border: none;
+  color: #fbbf24;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  opacity: 0.6;
+  transition: all 0.15s;
+}
+.verify-banner-close:hover {
+  opacity: 1;
+  background: rgba(245, 158, 11, 0.15);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .app-main {
@@ -120,5 +189,10 @@
 
   .app-content {
     padding: 16px;
+  }
+
+  .verify-banner {
+    left: 0;
+    padding: 8px 16px;
   }
 }
