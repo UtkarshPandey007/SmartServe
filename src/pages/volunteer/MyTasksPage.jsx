@@ -38,9 +38,12 @@ export default function MyTasksPage() {
 
   const statuses = ['All', 'Assigned', 'In Progress', 'Completed'];
 
-  const handleComplete = async (taskDocId) => {
+  const handleComplete = async (taskDocId, needId) => {
     const hours = parseFloat(hoursInput) || 0;
-    await completeTask(taskDocId, hours);
+    // Find the need's Firestore docId so we can update its status too
+    const need = allNeeds.find(n => n.id === needId);
+    const needDocId = need?._docId || null;
+    await completeTask(taskDocId, hours, needDocId);
     setCompleting(null);
     setHoursInput('');
   };
@@ -153,7 +156,7 @@ export default function MyTasksPage() {
                         step={0.5}
                         autoFocus
                       />
-                      <button className="btn-primary btn-sm btn-success" onClick={() => handleComplete(task._docId)}>
+                      <button className="btn-primary btn-sm btn-success" onClick={() => handleComplete(task._docId, task.needId)}>
                         <CheckCircle2 size={14} /> <span>Submit</span>
                       </button>
                       <button className="btn-secondary btn-sm" onClick={() => setCompleting(null)}>

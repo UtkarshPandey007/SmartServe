@@ -7,6 +7,8 @@ import {
   signInWithPopup,
   signOut,
   updateProfile,
+  sendPasswordResetEmail,
+  sendEmailVerification,
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase/config';
 import { createUserProfile, getUserProfile, addVolunteerFromSignup, getVolunteerByUserId } from '../firebase/services';
@@ -59,6 +61,9 @@ export function AuthProvider({ children }) {
   const signup = async (email, password, displayName, role = 'coordinator', volunteerData = null) => {
     const result = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(result.user, { displayName });
+
+    // Send email verification
+    await sendEmailVerification(result.user);
 
     // Create user profile with chosen role
     await createUserProfile(result.user.uid, {
@@ -122,9 +127,24 @@ export function AuthProvider({ children }) {
     await signOut(auth);
   };
 
+  // Password reset — sends a Firebase password reset email
+  const resetPassword = async (email) => {
+    await sendPasswordResetEmail(auth, email);
+  };
+
+  // Resend email verification to current user
+  const resendVerification = async () => {
+    if (auth.currentUser && !auth.currentUser.emailVerified) {
+      await sendEmailVerification(auth.currentUser);
+    }
+  };
+
   // Convenience getters
   const isCoordinator = userProfile?.role === 'coordinator';
   const isVolunteer = userProfile?.role === 'volunteer';
+
+  // Check if email is verified (Google users are always verified)
+  const isEmailVerified = user?.emailVerified || user?.providerData?.[0]?.providerId === 'google.com';
 
   const value = {
     user,
@@ -135,8 +155,11 @@ export function AuthProvider({ children }) {
     signup,
     loginWithGoogle,
     logout,
+    resetPassword,
+    resendVerification,
     isCoordinator,
     isVolunteer,
+    isEmailVerified,
   };
 
   return (

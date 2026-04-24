@@ -14,6 +14,8 @@ import VolunteerDashboard from './pages/volunteer/VolunteerDashboard';
 import MyTasksPage from './pages/volunteer/MyTasksPage';
 import BrowseNeedsPage from './pages/volunteer/BrowseNeedsPage';
 import MyProfilePage from './pages/volunteer/MyProfilePage';
+import { Mail, RefreshCw, LogOut, CheckCircle2, Zap } from 'lucide-react';
+import { useState } from 'react';
 import './App.css';
 
 function ProtectedRoute({ children }) {
@@ -33,6 +35,99 @@ function ProtectedRoute({ children }) {
   }
 
   return children;
+}
+
+function EmailVerificationGate({ children }) {
+  const { user, isEmailVerified, resendVerification, logout } = useAuth();
+  const [resending, setResending] = useState(false);
+  const [resent, setResent] = useState(false);
+
+  // If verified or Google user, pass through
+  if (isEmailVerified) {
+    return children;
+  }
+
+  const handleResend = async () => {
+    setResending(true);
+    try {
+      await resendVerification();
+      setResent(true);
+      setTimeout(() => setResent(false), 5000);
+    } catch (err) {
+      alert('Failed to resend: ' + err.message);
+    } finally {
+      setResending(false);
+    }
+  };
+
+  const handleRefresh = () => {
+    // Force reload to re-check emailVerified from Firebase
+    window.location.reload();
+  };
+
+  return (
+    <div className="verify-email-screen">
+      <div className="login-bg">
+        <div className="bg-shape shape-1" />
+        <div className="bg-shape shape-2" />
+        <div className="bg-shape shape-3" />
+      </div>
+      <div className="verify-email-container">
+        <div className="login-brand">
+          <div className="brand-icon">
+            <Zap size={28} />
+          </div>
+          <h1>SmartServe</h1>
+        </div>
+        <div className="verify-email-card glass-card">
+          <div className="verify-icon">
+            <Mail size={32} />
+          </div>
+          <h2>Verify Your Email</h2>
+          <p className="verify-desc">
+            We've sent a verification link to <strong>{user?.email}</strong>.
+            Please check your inbox and click the link to activate your account.
+          </p>
+
+          {resent && (
+            <div className="verify-success-msg animate-fade-in">
+              <CheckCircle2 size={16} />
+              <span>Verification email resent successfully!</span>
+            </div>
+          )}
+
+          <div className="verify-actions">
+            <button className="btn-primary" onClick={handleRefresh} id="verify-refresh-btn">
+              <RefreshCw size={16} />
+              <span>I've Verified — Refresh</span>
+            </button>
+            <button
+              className="btn-secondary"
+              onClick={handleResend}
+              disabled={resending}
+              id="verify-resend-btn"
+            >
+              <Mail size={16} />
+              <span>{resending ? 'Sending...' : 'Resend Verification Email'}</span>
+            </button>
+            <button
+              className="btn-secondary"
+              onClick={logout}
+              id="verify-logout-btn"
+              style={{ color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+            >
+              <LogOut size={16} />
+              <span>Sign Out</span>
+            </button>
+          </div>
+
+          <p className="verify-hint">
+            Check your spam folder if you don't see the email.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function CoordinatorRoutes() {
@@ -80,17 +175,19 @@ function AppRoutes() {
         path="/*"
         element={
           <ProtectedRoute>
-            <AutoSeeder>
-              <div className="app-layout">
-                <Sidebar />
-                <div className="app-main">
-                  <Header />
-                  <main className="app-content">
-                    {isVolunteer ? <VolunteerRoutes /> : <CoordinatorRoutes />}
-                  </main>
+            <EmailVerificationGate>
+              <AutoSeeder>
+                <div className="app-layout">
+                  <Sidebar />
+                  <div className="app-main">
+                    <Header />
+                    <main className="app-content">
+                      {isVolunteer ? <VolunteerRoutes /> : <CoordinatorRoutes />}
+                    </main>
+                  </div>
                 </div>
-              </div>
-            </AutoSeeder>
+              </AutoSeeder>
+            </EmailVerificationGate>
           </ProtectedRoute>
         }
       />

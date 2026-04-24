@@ -154,13 +154,30 @@ export async function selfAssignTask(volunteerId, need) {
   return docRef.id;
 }
 
-export async function completeTask(taskDocId, hoursLogged = 0) {
+/**
+ * Mark a task as completed AND update the linked need's status.
+ * This ensures the coordinator's view (Dashboard, NeedsPage, Kanban) all reflect the change.
+ *
+ * @param {string} taskDocId - Firestore document ID of the task
+ * @param {number} hoursLogged - Hours the volunteer spent
+ * @param {string|null} needDocId - Firestore document ID of the linked need (optional)
+ */
+export async function completeTask(taskDocId, hoursLogged = 0, needDocId = null) {
+  // Update the task status to Completed
   await updateDoc(doc(db, 'tasks', taskDocId), {
     status: 'Completed',
     completedAt: new Date().toISOString(),
     hoursLogged,
     updatedAt: serverTimestamp(),
   });
+
+  // Also update the linked need's status so coordinator view stays in sync
+  if (needDocId) {
+    await updateDoc(doc(db, 'needs', needDocId), {
+      status: 'Completed',
+      updatedAt: serverTimestamp(),
+    });
+  }
 }
 
 export async function acceptTask(taskDocId) {
