@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { updateVolunteerProfile, getVolunteerByUserId } from '../../firebase/services';
+import { updateVolunteerProfile, subscribeToTasksByVolunteer } from '../../firebase/services';
 import { User, MapPin, Star, Award, Clock, CheckCircle2, Save, Edit3 } from 'lucide-react';
 import './VolunteerPages.css';
 
@@ -26,12 +26,26 @@ export default function MyProfilePage() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [myTasks, setMyTasks] = useState([]);
+  const volId = volunteerProfile?.id;
 
   useEffect(() => {
     if (volunteerProfile) {
       setProfile({ ...volunteerProfile });
     }
   }, [volunteerProfile]);
+
+  // Subscribe to tasks for real-time stats
+  useEffect(() => {
+    if (!volId) return;
+    const unsub = subscribeToTasksByVolunteer(volId, setMyTasks);
+    return () => unsub();
+  }, [volId]);
+
+  // Compute stats from live task data (same source of truth as dashboard)
+  const completedTasks = myTasks.filter(t => t.status === 'Completed');
+  const totalTasksDone = completedTasks.length;
+  const totalHours = completedTasks.reduce((sum, t) => sum + (t.hoursLogged || 0), 0);
 
   const handleSave = async () => {
     if (!profile?._docId) return;
@@ -108,12 +122,12 @@ export default function MyProfilePage() {
             </div>
             <div className="profile-stat">
               <CheckCircle2 size={16} color="var(--status-success)" />
-              <span className="ps-val">{profile.tasksCompleted || 0}</span>
+              <span className="ps-val">{totalTasksDone}</span>
               <span className="ps-label">Tasks</span>
             </div>
             <div className="profile-stat">
               <Clock size={16} color="var(--accent-primary)" />
-              <span className="ps-val">{profile.hoursContributed || 0}</span>
+              <span className="ps-val">{totalHours}</span>
               <span className="ps-label">Hours</span>
             </div>
           </div>
