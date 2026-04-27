@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LogIn, Mail, Lock, User, Eye, EyeOff, Zap, AlertCircle, MapPin, Briefcase, Heart, Shield } from 'lucide-react';
 import './LoginPage.css';
+
+const Spline = lazy(() => import('@splinetool/react-spline'));
 
 const skillOptions = [
   'First Aid', 'Teaching', 'Construction', 'Cooking', 'Driving',
@@ -94,12 +96,15 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
-      {/* Animated background shapes */}
-      <div className="login-bg">
-        <div className="bg-shape shape-1" />
-        <div className="bg-shape shape-2" />
-        <div className="bg-shape shape-3" />
+      {/* Fullscreen Spline 3D Background */}
+      <div className="login-spline-bg">
+        <Suspense fallback={<div className="spline-fallback" />}>
+          <Spline scene="https://prod.spline.design/WkV2f86GDHR1Bk0icvtOZVdl/scene.splinecode" />
+        </Suspense>
       </div>
+
+      {/* Dark overlay for readability */}
+      <div className="login-overlay" />
 
       <div className="login-container">
         {/* Brand */}
