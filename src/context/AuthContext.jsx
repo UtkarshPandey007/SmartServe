@@ -62,9 +62,6 @@ export function AuthProvider({ children }) {
     const result = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(result.user, { displayName });
 
-    // Send email verification
-    await sendEmailVerification(result.user);
-
     // Create user profile with chosen role
     await createUserProfile(result.user.uid, {
       email,

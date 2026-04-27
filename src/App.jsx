@@ -14,8 +14,6 @@ import VolunteerDashboard from './pages/volunteer/VolunteerDashboard';
 import MyTasksPage from './pages/volunteer/MyTasksPage';
 import BrowseNeedsPage from './pages/volunteer/BrowseNeedsPage';
 import MyProfilePage from './pages/volunteer/MyProfilePage';
-import { Mail, X, CheckCircle2 } from 'lucide-react';
-import { useState } from 'react';
 import './App.css';
 
 function ProtectedRoute({ children }) {
@@ -35,61 +33,6 @@ function ProtectedRoute({ children }) {
   }
 
   return children;
-}
-
-/**
- * Non-blocking email verification banner.
- * Shows a dismissible warning banner at the top of the app if the user's
- * email is not verified. Does NOT block app access — just nudges the user.
- */
-function EmailVerificationBanner() {
-  const { user, isEmailVerified, resendVerification } = useAuth();
-  const [dismissed, setDismissed] = useState(false);
-  const [resending, setResending] = useState(false);
-  const [resent, setResent] = useState(false);
-
-  // Don't show if verified, dismissed, or no user
-  if (isEmailVerified || dismissed || !user) return null;
-
-  const handleResend = async () => {
-    setResending(true);
-    try {
-      await resendVerification();
-      setResent(true);
-      setTimeout(() => setResent(false), 4000);
-    } catch (err) {
-      console.error('Resend failed:', err);
-    } finally {
-      setResending(false);
-    }
-  };
-
-  return (
-    <div className="verify-banner">
-      <div className="verify-banner-content">
-        <Mail size={15} />
-        <span>
-          {resent ? (
-            <><CheckCircle2 size={13} style={{ verticalAlign: '-2px' }} /> Verification email sent! Check your inbox.</>
-          ) : (
-            <>Please verify your email <strong>{user.email}</strong> to secure your account.</>
-          )}
-        </span>
-        {!resent && (
-          <button
-            className="verify-banner-resend"
-            onClick={handleResend}
-            disabled={resending}
-          >
-            {resending ? 'Sending...' : 'Resend'}
-          </button>
-        )}
-      </div>
-      <button className="verify-banner-close" onClick={() => setDismissed(true)} title="Dismiss">
-        <X size={14} />
-      </button>
-    </div>
-  );
 }
 
 function CoordinatorRoutes() {
@@ -142,7 +85,6 @@ function AppRoutes() {
                   <Sidebar />
                   <div className="app-main">
                     <Header />
-                    <EmailVerificationBanner />
                     <main className="app-content">
                       {isVolunteer ? <VolunteerRoutes /> : <CoordinatorRoutes />}
                     </main>
