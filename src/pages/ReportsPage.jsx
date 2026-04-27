@@ -48,19 +48,37 @@ export default function ReportsPage() {
   const totalResolved = activeNeeds.filter(n => n.status === 'Completed').length;
   const totalReported = activeNeeds.length;
   const activeVolCount = activeVolunteers.filter(v => v.availability === 'available').length;
-  const totalHours = activeVolunteers.reduce((sum, v) => sum + (v.hoursContributed || 0), 0);
   const utilization = Math.round((activeTasks.filter(t => ['In Progress', 'Assigned'].includes(t.status)).length / Math.max(1, activeVolunteers.length)) * 100);
 
-  // Build leaderboard from live volunteer data
+  // Build volunteer stats map from tasks (single source of truth)
+  const volTaskStats = {};
+  activeTasks.forEach(t => {
+    if (!t.volunteerId) return;
+    if (!volTaskStats[t.volunteerId]) volTaskStats[t.volunteerId] = { completed: 0, hours: 0 };
+    if (t.status === 'Completed') {
+      volTaskStats[t.volunteerId].completed += 1;
+      volTaskStats[t.volunteerId].hours += (t.hoursLogged || 0);
+    }
+  });
+
+  const totalHours = Object.values(volTaskStats).reduce((sum, s) => sum + s.hours, 0)
+    || activeVolunteers.reduce((sum, v) => sum + (v.hoursContributed || 0), 0);
+
+  // Build leaderboard from live task data + volunteer info
   const liveLeaderboard = [...activeVolunteers]
-    .sort((a, b) => b.hoursContributed - a.hoursContributed)
+    .map(v => ({
+      ...v,
+      _tasksDone: volTaskStats[v.id]?.completed || v.tasksCompleted || 0,
+      _hoursLogged: volTaskStats[v.id]?.hours || v.hoursContributed || 0,
+    }))
+    .sort((a, b) => b._hoursLogged - a._hoursLogged)
     .slice(0, 10)
     .map((v, i) => ({
       rank: i + 1,
       volunteerId: v.id,
       name: v.name,
-      hours: v.hoursContributed,
-      tasks: v.tasksCompleted,
+      hours: v._hoursLogged,
+      tasks: v._tasksDone,
       rating: v.rating,
       city: v.location.city,
     }));

@@ -2,12 +2,13 @@ import { useState, useMemo, useEffect } from 'react';
 import { Search, Star, MapPin, Clock, Award, Filter, ChevronRight, X, Zap, Check } from 'lucide-react';
 import { volunteers as fallbackVolunteers, availabilityColors, availabilityLabels } from '../data/volunteers';
 import { needs as fallbackNeeds, categoryColors } from '../data/needs';
-import { subscribeToVolunteers, subscribeToNeeds, addTask, updateNeed } from '../firebase/services';
+import { subscribeToVolunteers, subscribeToNeeds, subscribeToTasks, addTask, updateNeed } from '../firebase/services';
 import './Pages.css';
 
 export default function VolunteersPage() {
   const [volunteers, setVolunteers] = useState(null);
   const [needs, setNeeds] = useState(null);
+  const [tasks, setTasks] = useState(null);
   const [search, setSearch] = useState('');
   const [availFilter, setAvailFilter] = useState('All');
   const [selectedNeed, setSelectedNeed] = useState(null);
@@ -24,11 +25,29 @@ export default function VolunteersPage() {
     unsubs.push(subscribeToNeeds((data) => {
       setNeeds(data.length > 0 ? data : fallbackNeeds);
     }));
+    unsubs.push(subscribeToTasks((data) => {
+      setTasks(data);
+    }));
     return () => unsubs.forEach(u => u());
   }, []);
 
   const activeVolunteers = volunteers || fallbackVolunteers;
   const activeNeeds = needs || fallbackNeeds;
+  const activeTasks = tasks || [];
+
+  // Build a map of volunteer stats from live tasks (single source of truth)
+  const volStatsMap = useMemo(() => {
+    const map = {};
+    activeTasks.forEach(t => {
+      if (!t.volunteerId) return;
+      if (!map[t.volunteerId]) map[t.volunteerId] = { completed: 0, hours: 0 };
+      if (t.status === 'Completed') {
+        map[t.volunteerId].completed += 1;
+        map[t.volunteerId].hours += (t.hoursLogged || 0);
+      }
+    });
+    return map;
+  }, [activeTasks]);
 
   const filtered = useMemo(() => {
     let result = [...activeVolunteers];
@@ -145,7 +164,7 @@ export default function VolunteersPage() {
               <div className="vol-rating">
                 <Star size={13} fill="#f59e0b" color="#f59e0b" />
                 <span>{v.rating}</span>
-                <span className="vol-tasks">• {v.tasksCompleted} tasks</span>
+                <span className="vol-tasks">• {volStatsMap[v.id]?.completed || v.tasksCompleted || 0} tasks</span>
               </div>
               <div className="vol-skills">
                 {v.skills.slice(0, 3).map(s => (
@@ -155,7 +174,7 @@ export default function VolunteersPage() {
               </div>
               <div className="vol-stats">
                 <div className="vol-stat">
-                  <span className="stat-val">{v.hoursContributed}</span>
+                  <span className="stat-val">{volStatsMap[v.id]?.hours || v.hoursContributed || 0}</span>
                   <span className="stat-lbl">Hours</span>
                 </div>
                 <div className="vol-stat">
