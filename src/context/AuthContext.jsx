@@ -11,7 +11,7 @@ import {
   sendEmailVerification,
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase/config';
-import { createUserProfile, getUserProfile, addVolunteerFromSignup, getVolunteerByUserId } from '../firebase/services';
+import { createUserProfile, getUserProfile, addVolunteerFromSignup, getVolunteerByUserId, subscribeToVolunteerByUserId } from '../firebase/services';
 
 const AuthContext = createContext(null);
 
@@ -27,14 +27,20 @@ export function AuthProvider({ children }) {
   const [volunteerProfile, setVolunteerProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Track the volunteer profile unsubscribe function
+  const [volUnsub, setVolUnsub] = useState(null);
+
   const loadProfiles = async (firebaseUser) => {
+    // Clean up previous volunteer subscription
+    if (volUnsub) { volUnsub(); setVolUnsub(null); }
+
     if (firebaseUser) {
       const profile = await getUserProfile(firebaseUser.uid);
       setUserProfile(profile);
-      // If volunteer, also load volunteer profile
+      // If volunteer, subscribe to real-time profile updates
       if (profile?.role === 'volunteer') {
-        const volProfile = await getVolunteerByUserId(firebaseUser.uid);
-        setVolunteerProfile(volProfile);
+        const unsub = subscribeToVolunteerByUserId(firebaseUser.uid, setVolunteerProfile);
+        setVolUnsub(() => unsub);
       } else {
         setVolunteerProfile(null);
       }

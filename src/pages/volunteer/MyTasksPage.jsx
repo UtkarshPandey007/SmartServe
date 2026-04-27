@@ -43,7 +43,8 @@ export default function MyTasksPage() {
     // Find the need's Firestore docId so we can update its status too
     const need = allNeeds.find(n => n.id === needId);
     const needDocId = need?._docId || null;
-    await completeTask(taskDocId, hours, needDocId);
+    const volunteerDocId = volunteerProfile?._docId || null;
+    await completeTask(taskDocId, hours, needDocId, volunteerDocId);
     setCompleting(null);
     setHoursInput('');
   };

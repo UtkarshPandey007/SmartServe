@@ -155,15 +155,18 @@ export async function selfAssignTask(volunteerId, need) {
 }
 
 /**
- * Mark a task as completed AND update the linked need's status.
- * This ensures the coordinator's view (Dashboard, NeedsPage, Kanban) all reflect the change.
+ * Mark a task as completed AND sync all related documents:
+ * 1. Task → status = Completed
+ * 2. Need → status = Completed (so coordinator views update)
+ * 3. Volunteer → tasksCompleted + hoursContributed incremented (so profile stats update)
  *
  * @param {string} taskDocId - Firestore document ID of the task
  * @param {number} hoursLogged - Hours the volunteer spent
- * @param {string|null} needDocId - Firestore document ID of the linked need (optional)
+ * @param {string|null} needDocId - Firestore document ID of the linked need
+ * @param {string|null} volunteerDocId - Firestore document ID of the volunteer
  */
-export async function completeTask(taskDocId, hoursLogged = 0, needDocId = null) {
-  // Update the task status to Completed
+export async function completeTask(taskDocId, hoursLogged = 0, needDocId = null, volunteerDocId = null) {
+  // 1. Update the task status to Completed
   await updateDoc(doc(db, 'tasks', taskDocId), {
     status: 'Completed',
     completedAt: new Date().toISOString(),
@@ -171,12 +174,26 @@ export async function completeTask(taskDocId, hoursLogged = 0, needDocId = null)
     updatedAt: serverTimestamp(),
   });
 
-  // Also update the linked need's status so coordinator view stays in sync
+  // 2. Update the linked need's status so coordinator view stays in sync
   if (needDocId) {
     await updateDoc(doc(db, 'needs', needDocId), {
       status: 'Completed',
       updatedAt: serverTimestamp(),
     });
+  }
+
+  // 3. Update the volunteer's profile stats
+  if (volunteerDocId) {
+    const volRef = doc(db, 'volunteers', volunteerDocId);
+    const volSnap = await getDoc(volRef);
+    if (volSnap.exists()) {
+      const volData = volSnap.data();
+      await updateDoc(volRef, {
+        tasksCompleted: (volData.tasksCompleted || 0) + 1,
+        hoursContributed: (volData.hoursContributed || 0) + hoursLogged,
+        updatedAt: serverTimestamp(),
+      });
+    }
   }
 }
 
@@ -217,4 +234,17 @@ export async function getVolunteerByUserId(uid) {
   if (snapshot.empty) return null;
   const d = snapshot.docs[0];
   return { ...d.data(), _docId: d.id };
+}
+
+/** Real-time subscription to volunteer profile — updates whenever the document changes */
+export function subscribeToVolunteerByUserId(uid, callback) {
+  const q = query(collection(db, 'volunteers'), where('uid', '==', uid));
+  return onSnapshot(q, (snapshot) => {
+    if (snapshot.empty) {
+      callback(null);
+    } else {
+      const d = snapshot.docs[0];
+      callback({ ...d.data(), _docId: d.id });
+    }
+  });
 }

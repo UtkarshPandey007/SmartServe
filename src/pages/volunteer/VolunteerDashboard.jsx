@@ -155,7 +155,11 @@ export default function VolunteerDashboard() {
                         </button>
                       )}
                       {task.status === 'In Progress' && (
-                        <button className="btn-primary btn-sm btn-success" onClick={() => completeTask(task._docId, 2)}>
+                        <button className="btn-primary btn-sm btn-success" onClick={() => {
+                          const needDocId = need?._docId || null;
+                          const volDocId = volunteerProfile?._docId || null;
+                          completeTask(task._docId, 2, needDocId, volDocId);
+                        }}>
                           <CheckCircle2 size={14} /> <span>Complete</span>
                         </button>
                       )}
