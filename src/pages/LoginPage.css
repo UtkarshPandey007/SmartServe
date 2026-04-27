@@ -1,56 +1,57 @@
-/* ============ Login Page ============ */
+/* ============ Login Page — Split Screen ============ */
 .login-page {
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
   background: #050510;
-  position: relative;
-  overflow: hidden;
 }
 
-/* Fullscreen Spline 3D Background */
-.login-spline-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+/* ---- Left: 3D Scene Panel ---- */
+.login-spline-panel {
+  position: relative;
+  flex: 1;
+  min-height: 100vh;
+  overflow: hidden;
+  display: none; /* hidden on mobile */
 }
-.login-spline-bg canvas {
+.login-spline-panel canvas {
   width: 100% !important;
   height: 100% !important;
 }
 
-/* Fallback while Spline loads */
+/* Fallback gradient while 3D loads */
 .spline-fallback {
   position: absolute;
   inset: 0;
   background: radial-gradient(ellipse at center, #1a1040 0%, #050510 70%);
 }
 
-/* Semi-transparent overlay for text readability */
-.login-overlay {
+/* Brand overlay on top of 3D scene */
+.spline-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(5, 5, 16, 0.35);
-  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  padding: 48px;
+  background: linear-gradient(to top, rgba(5, 5, 16, 0.8) 0%, transparent 50%);
   pointer-events: none;
-}
-
-.login-container {
-  position: relative;
   z-index: 2;
-  width: 100%;
-  max-width: 480px;
-  padding: 24px;
-  max-height: 100vh;
-  overflow-y: auto;
 }
 
-.login-brand {
-  text-align: center;
-  margin-bottom: 32px;
+.spline-brand h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 6px;
 }
-.brand-icon {
+.spline-brand p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+.spline-brand .brand-icon {
   width: 56px;
   height: 56px;
   border-radius: 16px;
@@ -58,32 +59,46 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
+  margin-bottom: 16px;
   color: white;
   box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4);
 }
-.login-brand h1 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin: 0 0 4px;
-}
-.login-brand p {
-  color: var(--text-muted);
-  font-size: 0.85rem;
+
+/* ---- Right: Form Panel ---- */
+.login-form-panel {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  position: relative;
 }
 
+.login-form-scroll {
+  width: 100%;
+  max-width: 480px;
+  padding: 24px;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+/* Show split layout on desktop */
+@media (min-width: 900px) {
+  .login-spline-panel {
+    display: block;
+  }
+  .login-form-panel {
+    width: 520px;
+    min-width: 520px;
+    border-left: 1px solid var(--border-color);
+  }
+}
+
+/* ---- Card ---- */
 .login-card {
   padding: 32px;
   text-align: center;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(99, 102, 241, 0.15);
-  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.5);
 }
 .login-card h2 {
   font-size: 1.35rem;
@@ -329,164 +344,4 @@
   border-color: var(--accent-primary);
   color: var(--accent-primary);
   font-weight: 600;
-}
-
-/* ---- Forgot Password ---- */
-.forgot-password-row {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: -6px;
-}
-
-.forgot-password-link {
-  background: none;
-  border: none;
-  color: var(--accent-primary);
-  font-size: 0.78rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.2s;
-}
-.forgot-password-link:hover {
-  text-decoration: underline;
-  color: #22d3ee;
-}
-
-/* ---- Reset Success ---- */
-.reset-success {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  padding: 8px 0;
-}
-
-.reset-success-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: rgba(16, 185, 129, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #10b981;
-  animation: successPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes successPop {
-  0% { transform: scale(0); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.reset-success-text {
-  color: var(--text-secondary);
-  font-size: 0.88rem;
-  line-height: 1.5;
-  text-align: center;
-}
-.reset-success-text strong {
-  color: var(--text-primary);
-}
-
-.reset-success-hint {
-  color: var(--text-muted);
-  font-size: 0.75rem;
-}
-
-/* ---- Email Verification Screen ---- */
-.verify-email-screen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-primary);
-  position: relative;
-  overflow: hidden;
-}
-
-.verify-email-container {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 480px;
-  padding: 24px;
-}
-
-.verify-email-card {
-  padding: 40px 32px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
-
-.verify-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: rgba(6, 182, 212, 0.1);
-  border: 2px solid rgba(6, 182, 212, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--accent-primary);
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.2); }
-  50% { box-shadow: 0 0 0 12px rgba(6, 182, 212, 0); }
-}
-
-.verify-email-card h2 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
-}
-
-.verify-email-card .verify-desc {
-  color: var(--text-secondary);
-  font-size: 0.88rem;
-  line-height: 1.6;
-  margin: 0;
-}
-.verify-email-card .verify-desc strong {
-  color: var(--text-primary);
-}
-
-.verify-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  margin-top: 8px;
-}
-
-.verify-actions .btn-primary,
-.verify-actions .btn-secondary {
-  width: 100%;
-  justify-content: center;
-  padding: 12px;
-}
-
-.verify-success-msg {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  border-radius: 8px;
-  color: #10b981;
-  font-size: 0.82rem;
-  width: 100%;
-}
-
-.verify-hint {
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  margin: 0;
 }

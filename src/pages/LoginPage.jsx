@@ -96,215 +96,215 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
-      {/* Fullscreen Spline 3D Background */}
-      <div className="login-spline-bg">
+      {/* Left: 3D Scene */}
+      <div className="login-spline-panel">
         <Suspense fallback={<div className="spline-fallback" />}>
           <Spline scene="https://prod.spline.design/WkV2f86GDHR1Bk0icvtOZVdl/scene.splinecode" />
         </Suspense>
+        <div className="spline-overlay">
+          <div className="spline-brand">
+            <div className="brand-icon">
+              <Zap size={28} />
+            </div>
+            <h1>SmartServe</h1>
+            <p>Data-Driven Volunteer Coordination</p>
+          </div>
+        </div>
       </div>
 
-      {/* Dark overlay for readability */}
-      <div className="login-overlay" />
+      {/* Right: Login Form */}
+      <div className="login-form-panel">
+        <div className="login-form-scroll">
+          {/* Card */}
+          <div className="login-card glass-card">
+            <h2>{isSignup ? 'Create Account' : 'Welcome Back'}</h2>
+            <p className="login-subtitle">
+              {isSignup ? 'Join the volunteer coordination platform' : 'Sign in to your dashboard'}
+            </p>
 
-      <div className="login-container">
-        {/* Brand */}
-        <div className="login-brand">
-          <div className="brand-icon">
-            <Zap size={28} />
-          </div>
-          <h1>SmartServe</h1>
-          <p>Data-Driven Volunteer Coordination</p>
-        </div>
-
-        {/* Card */}
-        <div className="login-card glass-card">
-          <h2>{isSignup ? 'Create Account' : 'Welcome Back'}</h2>
-          <p className="login-subtitle">
-            {isSignup ? 'Join the volunteer coordination platform' : 'Sign in to your dashboard'}
-          </p>
-
-          {error && (
-            <div className="login-error">
-              <AlertCircle size={16} />
-              <span>{error}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="login-form">
-            {/* Role selector — only on signup */}
-            {isSignup && (
-              <div className="role-selector">
-                <button
-                  type="button"
-                  className={`role-btn ${role === 'coordinator' ? 'active' : ''}`}
-                  onClick={() => setRole('coordinator')}
-                >
-                  <Shield size={18} />
-                  <div>
-                    <span className="role-title">Coordinator</span>
-                    <span className="role-desc">Manage needs & assign volunteers</span>
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  className={`role-btn ${role === 'volunteer' ? 'active' : ''}`}
-                  onClick={() => setRole('volunteer')}
-                >
-                  <Heart size={18} />
-                  <div>
-                    <span className="role-title">Volunteer</span>
-                    <span className="role-desc">Help with community needs</span>
-                  </div>
-                </button>
+            {error && (
+              <div className="login-error">
+                <AlertCircle size={16} />
+                <span>{error}</span>
               </div>
             )}
 
-            {isSignup && (
+            <form onSubmit={handleSubmit} className="login-form">
+              {/* Role selector — only on signup */}
+              {isSignup && (
+                <div className="role-selector">
+                  <button
+                    type="button"
+                    className={`role-btn ${role === 'coordinator' ? 'active' : ''}`}
+                    onClick={() => setRole('coordinator')}
+                  >
+                    <Shield size={18} />
+                    <div>
+                      <span className="role-title">Coordinator</span>
+                      <span className="role-desc">Manage needs & assign volunteers</span>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    className={`role-btn ${role === 'volunteer' ? 'active' : ''}`}
+                    onClick={() => setRole('volunteer')}
+                  >
+                    <Heart size={18} />
+                    <div>
+                      <span className="role-title">Volunteer</span>
+                      <span className="role-desc">Help with community needs</span>
+                    </div>
+                  </button>
+                </div>
+              )}
+
+              {isSignup && (
+                <div className="login-field">
+                  <User size={16} className="field-icon" />
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    className="input-field"
+                    id="signup-name"
+                  />
+                </div>
+              )}
               <div className="login-field">
-                <User size={16} className="field-icon" />
+                <Mail size={16} className="field-icon" />
                 <input
-                  type="text"
-                  placeholder="Full Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  type="email"
+                  placeholder="Email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   className="input-field"
-                  id="signup-name"
+                  id="login-email"
                 />
               </div>
-            )}
-            <div className="login-field">
-              <Mail size={16} className="field-icon" />
-              <input
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="input-field"
-                id="login-email"
-              />
-            </div>
-            <div className="login-field">
-              <Lock size={16} className="field-icon" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                className="input-field"
-                id="login-password"
-              />
-              <button
-                type="button"
-                className="toggle-pw"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-
-            {/* Volunteer extra fields */}
-            {isSignup && role === 'volunteer' && (
-              <div className="vol-signup-fields animate-fade-in">
-                <div className="login-field-row">
-                  <div className="login-field">
-                    <MapPin size={16} className="field-icon" />
-                    <input
-                      type="text"
-                      placeholder="City"
-                      value={volCity}
-                      onChange={(e) => setVolCity(e.target.value)}
-                      required
-                      className="input-field"
-                    />
-                  </div>
-                  <div className="login-field">
-                    <input
-                      type="text"
-                      placeholder="State"
-                      value={volState}
-                      onChange={(e) => setVolState(e.target.value)}
-                      required
-                      className="input-field"
-                    />
-                  </div>
-                </div>
-
-                <div className="vol-field-group">
-                  <label className="vol-field-label"><Briefcase size={13} /> Your Skills</label>
-                  <div className="chip-grid">
-                    {skillOptions.map(s => (
-                      <button
-                        key={s}
-                        type="button"
-                        className={`chip ${volSkills.includes(s) ? 'chip-active' : ''}`}
-                        onClick={() => toggleSkill(s)}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="vol-field-group">
-                  <label className="vol-field-label"><Heart size={13} /> Preferred Categories</label>
-                  <div className="chip-grid">
-                    {categoryOptions.map(c => (
-                      <button
-                        key={c}
-                        type="button"
-                        className={`chip ${volCategories.includes(c) ? 'chip-active' : ''}`}
-                        onClick={() => toggleCategory(c)}
-                      >
-                        {c}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+              <div className="login-field">
+                <Lock size={16} className="field-icon" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  className="input-field"
+                  id="login-password"
+                />
+                <button
+                  type="button"
+                  className="toggle-pw"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
-            )}
 
-            <button type="submit" className="btn-primary login-btn" disabled={loading} id="login-submit">
-              {loading ? (
-                <span className="login-spinner" />
-              ) : (
-                <>
-                  <LogIn size={16} />
-                  <span>{isSignup ? 'Create Account' : 'Sign In'}</span>
-                </>
+              {/* Volunteer extra fields */}
+              {isSignup && role === 'volunteer' && (
+                <div className="vol-signup-fields animate-fade-in">
+                  <div className="login-field-row">
+                    <div className="login-field">
+                      <MapPin size={16} className="field-icon" />
+                      <input
+                        type="text"
+                        placeholder="City"
+                        value={volCity}
+                        onChange={(e) => setVolCity(e.target.value)}
+                        required
+                        className="input-field"
+                      />
+                    </div>
+                    <div className="login-field">
+                      <input
+                        type="text"
+                        placeholder="State"
+                        value={volState}
+                        onChange={(e) => setVolState(e.target.value)}
+                        required
+                        className="input-field"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="vol-field-group">
+                    <label className="vol-field-label"><Briefcase size={13} /> Your Skills</label>
+                    <div className="chip-grid">
+                      {skillOptions.map(s => (
+                        <button
+                          key={s}
+                          type="button"
+                          className={`chip ${volSkills.includes(s) ? 'chip-active' : ''}`}
+                          onClick={() => toggleSkill(s)}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="vol-field-group">
+                    <label className="vol-field-label"><Heart size={13} /> Preferred Categories</label>
+                    <div className="chip-grid">
+                      {categoryOptions.map(c => (
+                        <button
+                          key={c}
+                          type="button"
+                          className={`chip ${volCategories.includes(c) ? 'chip-active' : ''}`}
+                          onClick={() => toggleCategory(c)}
+                        >
+                          {c}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               )}
-            </button>
-          </form>
 
-          <div className="login-divider">
-            <span>or</span>
+              <button type="submit" className="btn-primary login-btn" disabled={loading} id="login-submit">
+                {loading ? (
+                  <span className="login-spinner" />
+                ) : (
+                  <>
+                    <LogIn size={16} />
+                    <span>{isSignup ? 'Create Account' : 'Sign In'}</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="login-divider">
+              <span>or</span>
+            </div>
+
+            <button className="google-btn" onClick={handleGoogle} disabled={loading} id="google-signin">
+              <svg width="18" height="18" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+              </svg>
+              <span>Continue with Google</span>
+            </button>
+
+            <p className="login-switch">
+              {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
+              <button type="button" onClick={() => { setIsSignup(!isSignup); setError(''); }}>
+                {isSignup ? 'Sign In' : 'Create one'}
+              </button>
+            </p>
           </div>
 
-          <button className="google-btn" onClick={handleGoogle} disabled={loading} id="google-signin">
-            <svg width="18" height="18" viewBox="0 0 48 48">
-              <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
-              <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
-              <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
-              <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
-            </svg>
-            <span>Continue with Google</span>
-          </button>
-
-          <p className="login-switch">
-            {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
-            <button type="button" onClick={() => { setIsSignup(!isSignup); setError(''); }}>
-              {isSignup ? 'Sign In' : 'Create one'}
-            </button>
+          <p className="login-footer">
+            Built for GDG Solution Challenge 2026
           </p>
         </div>
-
-        <p className="login-footer">
-          Built for GDG Solution Challenge 2026
-        </p>
       </div>
     </div>
   );
