@@ -2,7 +2,7 @@
 
 > Data-driven volunteer coordination for social impact. Built for **GDG Solution Challenge 2026**.
 
-🌐 **Live Demo:** [volunteeriq-47cca.web.app](https://volunteeriq-47cca.web.app)
+🌐 **Live Demo:** [SmartServe Live](https://volunteeriq-47cca.web.app)
 
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-Auth%20%2B%20Firestore-FFCA28?logo=firebase&logoColor=black)
@@ -94,7 +94,7 @@ npm install
 ### 2. Firebase Setup
 
 1. Go to [console.firebase.google.com](https://console.firebase.google.com)
-2. Create a project (e.g., `volunteeriq`)
+2. Create a project (e.g., `smartserve`)
 3. Enable **Authentication** → Email/Password + Google
 4. Create **Cloud Firestore** database in test mode
 
